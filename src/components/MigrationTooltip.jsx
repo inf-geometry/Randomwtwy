@@ -12,6 +12,7 @@ function describe(dataKey) {
     in: 'inflow',
     out: 'outflow',
     share: 'share',
+    cumShare: 'cumulative share',
   }[kind]
   return { group, kindLabel }
 }
@@ -21,8 +22,8 @@ export default function MigrationTooltip({ active, payload, label, metric }) {
 
   const fmt = (v) =>
     metric === 'share'
-      ? `${v >= 0 ? '+' : ''}${v.toFixed(2)}%`
-      : `${v >= 0 ? '+' : ''}${Math.round(v).toLocaleString()}k`
+      ? `${v >= 0 ? '+' : '−'}${Math.abs(v).toFixed(2)}%`
+      : `${v >= 0 ? '+' : '−'}${(Math.abs(v) / 1000).toFixed(2)}M`
 
   return (
     <div className="chart-tip">
