@@ -5,6 +5,7 @@ import Term from './components/Term.jsx'
 import MigrationChart from './components/MigrationChart.jsx'
 import SnapshotChart from './components/SnapshotChart.jsx'
 import StatCard from './components/StatCard.jsx'
+import useResizeKey from './components/useResizeKey.js'
 
 // Views are grouped into these categories, shown in order in the side-nav.
 const CATEGORIES = ['Levels', 'Flows & composition', 'Change over time']
@@ -137,8 +138,12 @@ const AXIS_NOTES = {
 export default function App() {
   const [metric, setMetric] = useState('annual')
   const [active, setActive] = useState(GROUPS.map((g) => g.key))
+  const resizeKey = useResizeKey()
 
   const current = METRICS.find((m) => m.id === metric)
+  // Remount the chart on view change and on resize so Recharts always
+  // re-measures its container (Area/Line plots otherwise blank after resize).
+  const chartKey = `${metric}-${resizeKey}`
 
   const toggleGroup = (key) => {
     setActive((prev) => {
@@ -256,9 +261,9 @@ export default function App() {
                 <p className="card__caption">{current.caption}</p>
               </div>
               {metric === 'snapshot' ? (
-                <SnapshotChart active={active} />
+                <SnapshotChart key={chartKey} active={active} />
               ) : (
-                <MigrationChart metric={metric} active={active} />
+                <MigrationChart key={chartKey} metric={metric} active={active} />
               )}
               {metric !== 'snapshot' && (
                 <p className="card__axis-note">

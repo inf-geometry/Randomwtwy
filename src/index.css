@@ -725,33 +725,43 @@ h4 {
   .glossary__grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  /* Side-nav collapses to a horizontal, scrollable strip of views. */
+  /* Side-nav stacks above the chart; each category's views wrap as pills. */
   .explorer__grid {
     grid-template-columns: 1fr;
     gap: 18px;
   }
   .viewnav {
     position: static;
-    flex-direction: row;
-    gap: 8px;
-    overflow-x: auto;
-    padding-bottom: 6px;
-    -webkit-overflow-scrolling: touch;
+    gap: 16px;
   }
   .viewnav__group {
     flex-direction: row;
-    align-items: stretch;
+    flex-wrap: wrap;
+    align-items: center;
     gap: 8px;
-    flex: none;
   }
   .viewnav__cat {
-    display: none;
+    flex: 1 1 100%;
+    padding: 0;
   }
   .viewnav__btn {
-    flex: none;
-    white-space: nowrap;
+    flex: 0 0 auto;
+    flex-direction: row;
+    gap: 6px;
+    padding: 9px 15px;
+    border-radius: 999px;
     border-color: var(--line);
     background: #fff;
+    white-space: nowrap;
+  }
+  .viewnav__btn.is-active {
+    border-color: var(--indigo);
+  }
+  .viewnav__btn .viewnav__tag {
+    display: none;
+  }
+  .viewnav__label {
+    font-size: 0.92rem;
   }
 }
 
