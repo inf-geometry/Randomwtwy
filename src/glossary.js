@@ -45,4 +45,16 @@ export const GLOSSARY = {
     title: 'Provisional',
     body: 'An early estimate that may be revised as more complete data becomes available. The most recent years here are provisional.',
   },
+  composition: {
+    title: 'Composition of arrivals',
+    body: 'How total immigration in a year splits between the nationality groups — each group’s share of everyone who arrived. It answers “who is arriving?”, which net figures hide.',
+  },
+  'emigration intensity': {
+    title: 'Emigration intensity',
+    body: 'Outflows divided by inflows for a group — how many people leave for each one who arrives. Above 1.0 means the group is shrinking through migration (net-leaving); below 1.0 means it is growing.',
+  },
+  momentum: {
+    title: 'Momentum',
+    body: 'The change in net migration compared with the previous year. Positive bars mean net migration rose year-on-year; negative bars mean it fell — useful for seeing turning points rather than levels.',
+  },
 }

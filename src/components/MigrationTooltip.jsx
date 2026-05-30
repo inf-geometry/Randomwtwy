@@ -13,6 +13,9 @@ function describe(dataKey) {
     out: 'outflow',
     share: 'share',
     cumShare: 'cumulative share',
+    inShare: 'share of arrivals',
+    emRatio: 'leave ÷ arrive',
+    yoy: 'change vs prior yr',
   }[kind]
   return { group, kindLabel }
 }
@@ -20,10 +23,13 @@ function describe(dataKey) {
 export default function MigrationTooltip({ active, payload, label, metric }) {
   if (!active || !payload || !payload.length) return null
 
-  const fmt = (v) =>
-    metric === 'share'
-      ? `${v >= 0 ? '+' : '−'}${Math.abs(v).toFixed(2)}%`
-      : `${v >= 0 ? '+' : '−'}${(Math.abs(v) / 1000).toFixed(2)}M`
+  const fmt = (v) => {
+    if (v == null) return '—'
+    if (metric === 'composition') return `${v.toFixed(1)}%`
+    if (metric === 'share') return `${v >= 0 ? '+' : '−'}${Math.abs(v).toFixed(2)}%`
+    if (metric === 'emigration') return `${v.toFixed(2)}×`
+    return `${v >= 0 ? '+' : '−'}${(Math.abs(v) / 1000).toFixed(2)}M`
+  }
 
   return (
     <div className="chart-tip">

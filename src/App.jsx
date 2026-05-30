@@ -3,11 +3,16 @@ import { GROUPS, HEADLINES, UK_BORN_BENCHMARK } from './data.js'
 import { GLOSSARY } from './glossary.js'
 import Term from './components/Term.jsx'
 import MigrationChart from './components/MigrationChart.jsx'
+import SnapshotChart from './components/SnapshotChart.jsx'
 import StatCard from './components/StatCard.jsx'
+
+// Views are grouped into these categories, shown in order in the side-nav.
+const CATEGORIES = ['Levels', 'Flows & composition', 'Change over time']
 
 const METRICS = [
   {
     id: 'annual',
+    cat: 'Levels',
     label: 'Annual net',
     tag: 'Per year',
     title: 'Annual net migration by group',
@@ -22,6 +27,7 @@ const METRICS = [
   },
   {
     id: 'cumulative',
+    cat: 'Levels',
     label: 'Cumulative net',
     tag: 'Running total',
     title: 'Cumulative net migration since 2020',
@@ -34,20 +40,8 @@ const METRICS = [
     ),
   },
   {
-    id: 'flows',
-    label: 'In vs out',
-    tag: 'Both directions',
-    title: 'Inflows and outflows',
-    caption: (
-      <>
-        Bars above the line are <Term id="inflow">inflows</Term> (people arriving); bars below are{' '}
-        <Term id="outflow">outflows</Term> (people leaving). The gap between them is that group’s
-        net migration.
-      </>
-    ),
-  },
-  {
     id: 'share',
+    cat: 'Levels',
     label: 'Share of UK-born',
     tag: 'For scale',
     title: 'Cumulative net migration vs the UK-born benchmark',
@@ -60,7 +54,85 @@ const METRICS = [
       </>
     ),
   },
+  {
+    id: 'flows',
+    cat: 'Flows & composition',
+    label: 'In vs out',
+    tag: 'Both directions',
+    title: 'Inflows and outflows',
+    caption: (
+      <>
+        Bars above the line are <Term id="inflow">inflows</Term> (people arriving); bars below are{' '}
+        <Term id="outflow">outflows</Term> (people leaving). The gap between them is that group’s
+        net migration.
+      </>
+    ),
+  },
+  {
+    id: 'composition',
+    cat: 'Flows & composition',
+    label: 'Composition of arrivals',
+    tag: 'Who arrives',
+    title: 'Composition of arrivals',
+    caption: (
+      <>
+        The <Term id="composition">composition</Term> of each year’s arrivals — every group’s share
+        of total <Term id="inflow">immigration</Term>. Non-EU+ nationals rose from about 44% of
+        arrivals in 2020 to roughly 82% in 2023. (Always shows all three groups.)
+      </>
+    ),
+  },
+  {
+    id: 'emigration',
+    cat: 'Flows & composition',
+    label: 'Emigration intensity',
+    tag: 'Stay vs leave',
+    title: 'Emigration intensity — who leaves vs who arrives',
+    caption: (
+      <>
+        <Term id="emigration intensity">Emigration intensity</Term> is{' '}
+        <Term id="outflow">outflows</Term> divided by <Term id="inflow">inflows</Term>. Above the
+        dashed “net zero” line, a group is shrinking through migration: British nationals leave more
+        than twice as fast as they arrive.
+      </>
+    ),
+  },
+  {
+    id: 'momentum',
+    cat: 'Change over time',
+    label: 'Momentum (YoY)',
+    tag: 'Turning points',
+    title: 'Year-over-year change in net migration',
+    caption: (
+      <>
+        <Term id="momentum">Momentum</Term> — how much each group’s{' '}
+        <Term id="net migration">net migration</Term> changed versus the year before. The surge of
+        2021–22 gives way to a sharp reversal in 2024–25.
+      </>
+    ),
+  },
+  {
+    id: 'snapshot',
+    cat: 'Change over time',
+    label: 'Year explorer',
+    tag: 'Interactive',
+    title: 'Year-by-year explorer',
+    caption: (
+      <>
+        Press play or drag the slider to move through the years and watch{' '}
+        <Term id="inflow">arrivals</Term> and <Term id="outflow">departures</Term> shift for each
+        group. The gap between the two bars is that group’s net migration.
+      </>
+    ),
+  },
 ]
+
+const AXIS_NOTES = {
+  share:
+    'Vertical axis: cumulative net migration since 2020 as a share of the fixed UK-born benchmark.',
+  composition: 'Vertical axis: share of each year’s total immigration (sums to 100%).',
+  emigration: 'Vertical axis: people leaving per person arriving (1.0× = net zero).',
+}
 
 export default function App() {
   const [metric, setMetric] = useState('annual')
@@ -136,55 +208,66 @@ export default function App() {
           </p>
         </div>
 
-        {/* Metric switcher */}
-        <div className="segmented" role="tablist" aria-label="Choose a view">
-          {METRICS.map((m) => (
-            <button
-              key={m.id}
-              role="tab"
-              aria-selected={metric === m.id}
-              className={`segmented__btn ${metric === m.id ? 'is-active' : ''}`}
-              onClick={() => setMetric(m.id)}
-            >
-              <span className="segmented__tag">{m.tag}</span>
-              <span className="segmented__label">{m.label}</span>
-            </button>
-          ))}
-        </div>
+        <div className="explorer__grid">
+          {/* View side-nav, grouped by category */}
+          <nav className="viewnav" aria-label="Choose a view">
+            {CATEGORIES.map((cat) => (
+              <div className="viewnav__group" key={cat}>
+                <div className="viewnav__cat">{cat}</div>
+                {METRICS.filter((m) => m.cat === cat).map((m) => (
+                  <button
+                    key={m.id}
+                    aria-current={metric === m.id}
+                    className={`viewnav__btn ${metric === m.id ? 'is-active' : ''}`}
+                    onClick={() => setMetric(m.id)}
+                  >
+                    <span className="viewnav__label">{m.label}</span>
+                    <span className="viewnav__tag">{m.tag}</span>
+                  </button>
+                ))}
+              </div>
+            ))}
+          </nav>
 
-        {/* Group chips */}
-        <div className="chips" role="group" aria-label="Toggle nationality groups">
-          {GROUPS.map((g) => {
-            const on = active.includes(g.key)
-            return (
-              <button
-                key={g.key}
-                className={`chip ${on ? 'is-on' : ''}`}
-                style={{ '--chip': g.color, '--chip-soft': g.soft }}
-                aria-pressed={on}
-                onClick={() => toggleGroup(g.key)}
-              >
-                <span className="chip__dot" />
-                {g.label}
-              </button>
-            )
-          })}
-        </div>
+          <div className="viewmain">
+            {/* Group chips */}
+            <div className="chips" role="group" aria-label="Toggle nationality groups">
+              {GROUPS.map((g) => {
+                const on = active.includes(g.key)
+                return (
+                  <button
+                    key={g.key}
+                    className={`chip ${on ? 'is-on' : ''}`}
+                    style={{ '--chip': g.color, '--chip-soft': g.soft }}
+                    aria-pressed={on}
+                    onClick={() => toggleGroup(g.key)}
+                  >
+                    <span className="chip__dot" />
+                    {g.label}
+                  </button>
+                )
+              })}
+            </div>
 
-        {/* Chart card */}
-        <div className="card">
-          <div className="card__head">
-            <div>
-              <h3 className="card__title">{current.title}</h3>
-              <p className="card__caption">{current.caption}</p>
+            {/* Chart card */}
+            <div className="card">
+              <div className="card__head">
+                <h3 className="card__title">{current.title}</h3>
+                <p className="card__caption">{current.caption}</p>
+              </div>
+              {metric === 'snapshot' ? (
+                <SnapshotChart active={active} />
+              ) : (
+                <MigrationChart metric={metric} active={active} />
+              )}
+              {metric !== 'snapshot' && (
+                <p className="card__axis-note">
+                  {AXIS_NOTES[metric] ||
+                    'Vertical axis: millions of people (M). All figures are provisional ONS estimates.'}
+                </p>
+              )}
             </div>
           </div>
-          <MigrationChart metric={metric} active={active} />
-          <p className="card__axis-note">
-            {metric === 'share'
-              ? 'Vertical axis: cumulative net migration since 2020 as a share of the fixed UK-born benchmark.'
-              : 'Vertical axis: millions of people (M). All figures are provisional ONS estimates.'}
-          </p>
         </div>
       </section>
 

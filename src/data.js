@@ -80,6 +80,7 @@ const pct = (v) => (v / UK_BORN_BENCHMARK) * 100
 // Pre-compute every series the charts need, in one tidy pass.
 function buildSeries() {
   const cum = { nonEu: 0, eu: 0, brit: 0 }
+  let prev = null
   return RAW.map((row) => {
     cum.nonEu += row.nonEu.net
     cum.eu += row.eu.net
@@ -89,7 +90,14 @@ function buildSeries() {
     const overallIn = row.nonEu.in + row.eu.in + row.brit.in
     const overallOut = row.nonEu.out + row.eu.out + row.brit.out
 
-    return {
+    // Share of each year's total immigration (inflows) by group (%)
+    const inShare = (g) => (g.in / overallIn) * 100
+    // How many people leave for each one who arrives (outflow ÷ inflow)
+    const emRatio = (g) => g.out / g.in
+    // Change in net migration versus the previous year (thousands)
+    const yoy = (key) => (prev ? row[key].net - prev[key].net : null)
+
+    const out = {
       year: row.year,
 
       // Annual net migration
@@ -125,7 +133,27 @@ function buildSeries() {
       eu_cumShare: pct(cum.eu),
       brit_cumShare: pct(cum.brit),
       overall_cumShare: pct(cum.nonEu + cum.eu + cum.brit),
+
+      // Composition of arrivals — each group's share of total immigration (%)
+      nonEu_inShare: inShare(row.nonEu),
+      eu_inShare: inShare(row.eu),
+      brit_inShare: inShare(row.brit),
+
+      // Emigration intensity — outflow per inflow (>1 means net-leaving)
+      nonEu_emRatio: emRatio(row.nonEu),
+      eu_emRatio: emRatio(row.eu),
+      brit_emRatio: emRatio(row.brit),
+
+      // Momentum — change in net migration vs the previous year (thousands)
+      nonEu_yoy: yoy('nonEu'),
+      eu_yoy: yoy('eu'),
+      brit_yoy: yoy('brit'),
+      overall_yoy: prev
+        ? overallNet - (prev.nonEu.net + prev.eu.net + prev.brit.net)
+        : null,
     }
+    prev = row
+    return out
   })
 }
 
