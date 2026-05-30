@@ -13,7 +13,8 @@ import {
 import { SERIES, GROUPS } from '../data.js'
 import MigrationTooltip from './MigrationTooltip.jsx'
 
-const axisFmtThousands = (v) => `${v >= 0 ? '' : '−'}${Math.abs(v).toLocaleString()}k`
+// Values are stored in thousands; show them in millions on screen.
+const axisFmtMillions = (v) => `${v < 0 ? '−' : ''}${(Math.abs(v) / 1000).toFixed(2)}M`
 const axisFmtPct = (v) => `${v}%`
 
 // Renders the right Recharts shapes for the active metric, filtered to the
@@ -49,7 +50,7 @@ export default function MigrationChart({ metric, active }) {
             dy={6}
           />
           <YAxis
-            tickFormatter={isPct ? axisFmtPct : axisFmtThousands}
+            tickFormatter={isPct ? axisFmtPct : axisFmtMillions}
             tickLine={false}
             axisLine={false}
             width={60}
@@ -114,13 +115,13 @@ export default function MigrationChart({ metric, active }) {
               />,
             ])}
 
-          {/* Net as a share of the UK-born benchmark — lines */}
+          {/* Cumulative net as a share of the UK-born benchmark — lines */}
           {metric === 'share' &&
             groups.map((g) => (
               <Line
                 key={g.key}
                 type="monotone"
-                dataKey={`${g.key}_share`}
+                dataKey={`${g.key}_cumShare`}
                 stroke={g.color}
                 strokeWidth={3}
                 dot={{ r: 3, fill: g.color, strokeWidth: 0 }}

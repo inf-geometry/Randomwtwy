@@ -50,13 +50,13 @@ const METRICS = [
     id: 'share',
     label: 'Share of UK-born',
     tag: 'For scale',
-    title: 'Net migration vs the UK-born benchmark',
+    title: 'Cumulative net migration vs the UK-born benchmark',
     caption: (
       <>
-        Each year’s net figure shown as a share of a fixed{' '}
-        <Term id="uk-born benchmark">UK-born benchmark</Term> of ~
+        The <Term id="cumulative">cumulative</Term> net figure since 2020 shown as a share of a
+        fixed <Term id="uk-born benchmark">UK-born benchmark</Term> of ~
         {(UK_BORN_BENCHMARK / 1000).toFixed(1)} million — an illustrative yardstick for scale, not a
-        real annual denominator.
+        real annual denominator. By 2025 Non-EU+ arrivals net to roughly 6% of that baseline.
       </>
     ),
   },
@@ -100,25 +100,25 @@ export default function App() {
       {/* ---------- Headline stats ---------- */}
       <section className="stats">
         <StatCard
-          value={HEADLINES.peakNet}
+          value={HEADLINES.peakNet / 1000}
           label={`Overall net migration peaked in ${HEADLINES.peakYear}`}
           sub="sum of all three groups"
           accent="#4f46e5"
         />
         <StatCard
-          value={HEADLINES.overallNetLatest}
+          value={HEADLINES.overallNetLatest / 1000}
           label={`Overall net migration, ${HEADLINES.latestYear}`}
           sub="down sharply from the peak"
           accent="#0ea5e9"
         />
         <StatCard
-          value={HEADLINES.nonEuCumulative}
+          value={HEADLINES.nonEuCumulative / 1000}
           label="Non-EU+ net, added up 2020–2025"
           sub="the main driver of the rise"
           accent="#f59e0b"
         />
         <StatCard
-          value={HEADLINES.britCumulative}
+          value={HEADLINES.britCumulative / 1000}
           label="British net, added up 2020–2025"
           sub="a steady, growing net outflow"
           accent="#10b981"
@@ -182,8 +182,8 @@ export default function App() {
           <MigrationChart metric={metric} active={active} />
           <p className="card__axis-note">
             {metric === 'share'
-              ? 'Vertical axis: net migration as a share of the fixed UK-born benchmark.'
-              : 'Vertical axis: thousands of people (k). All figures are provisional ONS estimates.'}
+              ? 'Vertical axis: cumulative net migration since 2020 as a share of the fixed UK-born benchmark.'
+              : 'Vertical axis: millions of people (M). All figures are provisional ONS estimates.'}
           </p>
         </div>
       </section>

@@ -114,11 +114,17 @@ function buildSeries() {
       overall_in: overallIn,
       overall_out: -overallOut,
 
-      // Net as a share of the fixed UK-born benchmark (%)
+      // Single-year net as a share of the fixed UK-born benchmark (%)
       nonEu_share: pct(row.nonEu.net),
       eu_share: pct(row.eu.net),
       brit_share: pct(row.brit.net),
       overall_share: pct(overallNet),
+
+      // Cumulative net (since 2020) as a share of the UK-born benchmark (%)
+      nonEu_cumShare: pct(cum.nonEu),
+      eu_cumShare: pct(cum.eu),
+      brit_cumShare: pct(cum.brit),
+      overall_cumShare: pct(cum.nonEu + cum.eu + cum.brit),
     }
   })
 }
