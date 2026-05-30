@@ -15,19 +15,30 @@ import MigrationTooltip from './MigrationTooltip.jsx'
 
 // Values are stored in thousands; show them in millions on screen.
 const axisFmtMillions = (v) => `${v < 0 ? '−' : ''}${(Math.abs(v) / 1000).toFixed(2)}M`
-const axisFmtPct = (v) => `${v}%`
+const axisFmtPct = (v) => `${Math.round(v * 10) / 10}%`
+const axisFmtRatio = (v) => `${Math.round(v * 100) / 100}×`
 
 // Renders the right Recharts shapes for the active metric, filtered to the
 // currently-enabled nationality groups.
 export default function MigrationChart({ metric, active }) {
   const groups = GROUPS.filter((g) => active.includes(g.key))
-  const isPct = metric === 'share'
+  // Composition is a share-of-total view, so it always shows all three groups.
+  const compGroups = GROUPS
+
+  const isShareLike = metric === 'share' || metric === 'composition'
+  const tickFormatter =
+    metric === 'emigration'
+      ? axisFmtRatio
+      : isShareLike
+        ? axisFmtPct
+        : axisFmtMillions
 
   return (
     <div className="chart-wrap">
       <ResponsiveContainer width="100%" height={440}>
         <ComposedChart
           data={SERIES}
+          stackOffset="none"
           margin={{ top: 16, right: 12, bottom: 8, left: 4 }}
           barGap={metric === 'flows' ? 2 : 4}
           barCategoryGap={metric === 'flows' ? '22%' : '28%'}
@@ -50,13 +61,23 @@ export default function MigrationChart({ metric, active }) {
             dy={6}
           />
           <YAxis
-            tickFormatter={isPct ? axisFmtPct : axisFmtMillions}
+            tickFormatter={tickFormatter}
+            domain={metric === 'composition' ? [0, 100] : ['auto', 'auto']}
             tickLine={false}
             axisLine={false}
             width={60}
             tick={{ fill: '#94a3b8', fontSize: 12 }}
           />
           <ReferenceLine y={0} stroke="rgba(15,23,42,0.35)" strokeWidth={1.5} />
+          {/* Net-zero threshold for the emigration ratio (leave = arrive). */}
+          {metric === 'emigration' && (
+            <ReferenceLine
+              y={1}
+              stroke="rgba(15,23,42,0.45)"
+              strokeDasharray="5 5"
+              label={{ value: 'net zero', position: 'right', fill: '#94a3b8', fontSize: 11 }}
+            />
+          )}
           <Tooltip
             cursor={{ fill: 'rgba(79,70,229,0.06)' }}
             content={<MigrationTooltip metric={metric} />}
@@ -115,17 +136,46 @@ export default function MigrationChart({ metric, active }) {
               />,
             ])}
 
-          {/* Cumulative net as a share of the UK-born benchmark — lines */}
-          {metric === 'share' &&
+          {/* Composition of arrivals — 100% stacked areas (share of immigration) */}
+          {metric === 'composition' &&
+            compGroups.map((g) => (
+              <Area
+                key={g.key}
+                type="monotone"
+                dataKey={`${g.key}_inShare`}
+                stackId="comp"
+                stroke={g.color}
+                strokeWidth={1.5}
+                fill={g.color}
+                fillOpacity={0.78}
+                animationDuration={650}
+              />
+            ))}
+
+          {/* Emigration intensity — outflow per inflow, as lines */}
+          {metric === 'emigration' &&
             groups.map((g) => (
               <Line
                 key={g.key}
                 type="monotone"
-                dataKey={`${g.key}_cumShare`}
+                dataKey={`${g.key}_emRatio`}
                 stroke={g.color}
                 strokeWidth={3}
                 dot={{ r: 3, fill: g.color, strokeWidth: 0 }}
                 activeDot={{ r: 6 }}
+                animationDuration={650}
+              />
+            ))}
+
+          {/* Momentum — year-over-year change in net, diverging grouped bars */}
+          {metric === 'momentum' &&
+            groups.map((g) => (
+              <Bar
+                key={g.key}
+                dataKey={`${g.key}_yoy`}
+                fill={g.color}
+                radius={[4, 4, 0, 0]}
+                maxBarSize={46}
                 animationDuration={650}
               />
             ))}

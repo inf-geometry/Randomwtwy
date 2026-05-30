@@ -535,6 +535,188 @@ h4 {
   color: var(--muted);
 }
 
+/* ---------------- Explorer layout (side-nav + main) ---------------- */
+.explorer__grid {
+  display: grid;
+  grid-template-columns: 232px 1fr;
+  gap: 28px;
+  align-items: start;
+  margin-top: 32px;
+}
+
+.viewnav {
+  position: sticky;
+  top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.viewnav__group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.viewnav__cat {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 0 6px 3px;
+}
+
+.viewnav__btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  border: 1px solid transparent;
+  background: transparent;
+  padding: 9px 13px;
+  border-radius: 12px;
+  color: var(--ink-soft);
+  transition: background 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+}
+
+.viewnav__btn:hover {
+  background: #eceefb;
+}
+
+.viewnav__btn.is-active {
+  background: #fff;
+  border-color: var(--line);
+  box-shadow: var(--shadow-sm);
+  color: var(--ink);
+}
+
+.viewnav__btn.is-active .viewnav__label {
+  color: var(--indigo);
+}
+
+.viewnav__label {
+  font-weight: 700;
+  font-size: 0.98rem;
+}
+
+.viewnav__tag {
+  font-size: 0.74rem;
+  color: var(--muted);
+}
+
+.viewmain {
+  min-width: 0; /* let the chart shrink inside the grid track */
+}
+
+/* ---------------- Snapshot (year explorer) ---------------- */
+.snap__controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 6px 0 12px;
+}
+
+.snap__play {
+  flex: none;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  background: var(--indigo);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 20px -8px rgba(79, 70, 229, 0.8);
+  transition: transform 0.15s ease;
+}
+
+.snap__play:hover {
+  transform: scale(1.07);
+}
+
+.snap__slider {
+  flex: 1;
+  accent-color: var(--indigo);
+  height: 6px;
+  cursor: pointer;
+}
+
+.snap__year {
+  font-size: 1.9rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  min-width: 4ch;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+.snap__summary {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 0.98rem;
+  color: var(--ink-soft);
+  margin-bottom: 6px;
+}
+
+.snap__summary strong {
+  color: var(--ink);
+}
+
+.snap__delta {
+  font-weight: 700;
+  font-size: 0.84rem;
+  padding: 2px 9px;
+  border-radius: 999px;
+  color: var(--ink-soft);
+  background: rgba(15, 23, 42, 0.06);
+}
+
+.snap__nets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.snap__net {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 6px 13px;
+}
+
+.snap__net strong {
+  color: var(--ink);
+}
+
+.snap__net-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--c);
+}
+
+.snap__legend {
+  margin-top: 12px;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
 /* ---------------- Responsive ---------------- */
 @media (max-width: 880px) {
   .stats {
@@ -542,6 +724,34 @@ h4 {
   }
   .glossary__grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+  /* Side-nav collapses to a horizontal, scrollable strip of views. */
+  .explorer__grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .viewnav {
+    position: static;
+    flex-direction: row;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .viewnav__group {
+    flex-direction: row;
+    align-items: stretch;
+    gap: 8px;
+    flex: none;
+  }
+  .viewnav__cat {
+    display: none;
+  }
+  .viewnav__btn {
+    flex: none;
+    white-space: nowrap;
+    border-color: var(--line);
+    background: #fff;
   }
 }
 
