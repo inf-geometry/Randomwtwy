@@ -112,6 +112,21 @@ export default function MigrationChart({ metric, active }) {
               />
             ))}
 
+          {/* Cumulative net as a share of the UK-born benchmark — lines */}
+          {metric === 'share' &&
+            groups.map((g) => (
+              <Line
+                key={g.key}
+                type="monotone"
+                dataKey={`${g.key}_cumShare`}
+                stroke={g.color}
+                strokeWidth={3}
+                dot={{ r: 3, fill: g.color, strokeWidth: 0 }}
+                activeDot={{ r: 6 }}
+                animationDuration={650}
+              />
+            ))}
+
           {/* Inflows (up) and outflows (down) — diverging stacked bars */}
           {metric === 'flows' &&
             groups.map((g) => [

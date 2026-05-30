@@ -7,10 +7,15 @@ import { useEffect, useState } from 'react'
 export default function useResizeKey() {
   const [key, setKey] = useState(0)
   useEffect(() => {
+    let width = window.innerWidth
     let timer
     const onResize = () => {
+      // Ignore height-only changes — on mobile, scrolling shows/hides the
+      // address bar and fires resize repeatedly, which would make charts flash.
+      if (window.innerWidth === width) return
+      width = window.innerWidth
       clearTimeout(timer)
-      timer = setTimeout(() => setKey((k) => k + 1), 150)
+      timer = setTimeout(() => setKey((k) => k + 1), 200)
     }
     window.addEventListener('resize', onResize)
     return () => {

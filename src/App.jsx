@@ -141,9 +141,10 @@ export default function App() {
   const resizeKey = useResizeKey()
 
   const current = METRICS.find((m) => m.id === metric)
-  // Remount the chart on view change and on resize so Recharts always
-  // re-measures its container (Area/Line plots otherwise blank after resize).
-  const chartKey = `${metric}-${resizeKey}`
+  // Remount the chart only when the viewport *width* changes, so Recharts
+  // re-measures (Area/Line plots otherwise blank after an orientation change).
+  // Switching views does NOT remount, keeping transitions smooth.
+  const chartKey = `chart-${resizeKey}`
 
   const toggleGroup = (key) => {
     setActive((prev) => {
