@@ -108,6 +108,7 @@ export const RAW = [
 
 // The three nationality groups, with display metadata.
 // Colours chosen for colour-blind legibility: British blue, EU+ green, Non-EU+ red.
+// `dash`/`marker` add a second, non-colour channel (line style + point shape).
 export const GROUPS = [
   {
     key: 'nonEu',
@@ -115,6 +116,8 @@ export const GROUPS = [
     short: 'Non-EU+',
     color: '#dc2626',
     soft: 'rgba(220, 38, 38, 0.12)',
+    dash: '2 4',
+    marker: 'triangle',
   },
   {
     key: 'eu',
@@ -122,6 +125,8 @@ export const GROUPS = [
     short: 'EU+',
     color: '#059669',
     soft: 'rgba(5, 150, 105, 0.12)',
+    dash: '7 4',
+    marker: 'square',
   },
   {
     key: 'brit',
@@ -129,7 +134,18 @@ export const GROUPS = [
     short: 'British',
     color: '#2563eb',
     soft: 'rgba(37, 99, 235, 0.12)',
+    dash: '',
+    marker: 'circle',
   },
+]
+
+// Notable policy / events to annotate on the time-series charts.
+export const ANNOTATIONS = [
+  { year: 2016, label: 'Brexit referendum' },
+  { year: 2020, label: 'Pandemic; IPS suspended' },
+  { year: 2021, label: 'Points-based system' },
+  { year: 2022, label: 'Ukraine & BN(O) routes' },
+  { year: 2024, label: 'Visa rules tightened' },
 ]
 
 const pct = (v) => (v / UK_BORN_BENCHMARK) * 100

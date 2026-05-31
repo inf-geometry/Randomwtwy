@@ -1,20 +1,41 @@
 import { useState } from 'react'
-import { GROUPS, HEADLINES, UK_BORN_BENCHMARK, SERIES, FIRST_YEAR, LAST_YEAR } from './data.js'
+import {
+  GROUPS,
+  HEADLINES,
+  UK_BORN_BENCHMARK,
+  SERIES,
+  FIRST_YEAR,
+  LAST_YEAR,
+  ANNOTATIONS,
+} from './data.js'
+import { REASONS, REASON_SERIES, REASON_FIRST_YEAR, REASON_LAST_YEAR } from './reasons.js'
 
 // A couple of data-driven facts used in captions, so nothing is hardcoded.
 const latest = SERIES[SERIES.length - 1]
 const nonEuShareNow = Math.round(latest.nonEu_cumShare)
 const compStart = SERIES[0]
 const compPeak = SERIES.reduce((a, b) => (b.nonEu_inShare > a.nonEu_inShare ? b : a))
+const r23 = REASON_SERIES.find((r) => r.year === 2023)
+const studyWorkPct23 = Math.round(
+  ((r23.work_in + r23.study_in) / REASONS.reduce((s, x) => s + r23[`${x.key}_in`], 0)) * 100
+)
 import { GLOSSARY } from './glossary.js'
 import Term from './components/Term.jsx'
 import MigrationChart from './components/MigrationChart.jsx'
 import SnapshotChart from './components/SnapshotChart.jsx'
+import ReasonChart from './components/ReasonChart.jsx'
+import AgeProfileChart from './components/AgeProfileChart.jsx'
 import StatCard from './components/StatCard.jsx'
 import useResizeKey from './components/useResizeKey.js'
 
 // Views are grouped into these categories, shown in order in the side-nav.
-const CATEGORIES = ['Levels', 'Flows & composition', 'Change over time']
+const CATEGORIES = [
+  'Levels',
+  'Flows & composition',
+  'Why people come',
+  'Change over time',
+  'Demographics',
+]
 
 const METRICS = [
   {
@@ -107,6 +128,22 @@ const METRICS = [
     ),
   },
   {
+    id: 'reasons',
+    cat: 'Why people come',
+    label: 'By reason (Non-EU+)',
+    tag: 'Study · work · asylum',
+    title: 'Non-EU+ migration by reason',
+    caption: (
+      <>
+        What actually drives the numbers. <Term id="study">Study</Term> and{' '}
+        <Term id="work">work</Term> powered the surge — together about {studyWorkPct23}% of Non-EU+
+        arrivals in 2023 — while the 2022 <Term id="humanitarian">humanitarian</Term> spike is the
+        Ukraine and BN(O) routes. Non-EU+ only, {REASON_FIRST_YEAR}–{REASON_LAST_YEAR} (British have
+        no visa reason).
+      </>
+    ),
+  },
+  {
     id: 'momentum',
     cat: 'Change over time',
     label: 'Momentum (YoY)',
@@ -134,6 +171,20 @@ const METRICS = [
       </>
     ),
   },
+  {
+    id: 'agesex',
+    cat: 'Demographics',
+    label: 'Age & sex profile',
+    tag: 'Population pyramid',
+    title: 'Migration by age and sex',
+    caption: (
+      <>
+        A population pyramid of arrivals (or departures) by age band and sex. Non-EU+ arrivals skew
+        heavily to ages 16–34; British departures spread more evenly across ages. British and
+        Non-EU+ only — recent years (2022–2025).
+      </>
+    ),
+  },
 ]
 
 const AXIS_NOTES = {
@@ -145,9 +196,13 @@ const AXIS_NOTES = {
 export default function App() {
   const [metric, setMetric] = useState('annual')
   const [active, setActive] = useState(GROUPS.map((g) => g.key))
+  const [showEvents, setShowEvents] = useState(false)
   const resizeKey = useResizeKey()
 
   const current = METRICS.find((m) => m.id === metric)
+  // Bespoke views (own controls/legends); the rest are nationality time-series.
+  const isTimeSeries = !['snapshot', 'reasons', 'agesex'].includes(metric)
+  const usesChips = metric !== 'reasons' && metric !== 'agesex'
   // Remount the chart only when the viewport *width* changes, so Recharts
   // re-measures (Area/Line plots otherwise blank after an orientation change).
   // Switching views does NOT remount, keeping transitions smooth.
@@ -208,7 +263,7 @@ export default function App() {
           value={HEADLINES.britCumulative / 1000}
           label={`British net, added up ${FIRST_YEAR}–${LAST_YEAR}`}
           sub="a steady, growing net outflow"
-          accent="#10b981"
+          accent="#2563eb"
         />
       </section>
 
@@ -245,41 +300,71 @@ export default function App() {
           </nav>
 
           <div className="viewmain">
-            {/* Group chips */}
-            <div className="chips" role="group" aria-label="Toggle nationality groups">
-              {GROUPS.map((g) => {
-                const on = active.includes(g.key)
-                return (
-                  <button
-                    key={g.key}
-                    className={`chip ${on ? 'is-on' : ''}`}
-                    style={{ '--chip': g.color, '--chip-soft': g.soft }}
-                    aria-pressed={on}
-                    onClick={() => toggleGroup(g.key)}
-                  >
-                    <span className="chip__dot" />
-                    {g.label}
-                  </button>
-                )
-              })}
-            </div>
+            {/* Group chips — only for the nationality time-series + snapshot */}
+            {usesChips && (
+              <div className="chips" role="group" aria-label="Toggle nationality groups">
+                {GROUPS.map((g) => {
+                  const on = active.includes(g.key)
+                  return (
+                    <button
+                      key={g.key}
+                      className={`chip ${on ? 'is-on' : ''}`}
+                      style={{ '--chip': g.color, '--chip-soft': g.soft }}
+                      aria-pressed={on}
+                      onClick={() => toggleGroup(g.key)}
+                    >
+                      <span className={`chip__dot chip__dot--${g.marker}`} />
+                      {g.label}
+                    </button>
+                  )
+                })}
+              </div>
+            )}
 
             {/* Chart card */}
             <div className="card">
               <div className="card__head">
-                <h3 className="card__title">{current.title}</h3>
-                <p className="card__caption">{current.caption}</p>
+                <div>
+                  <h3 className="card__title">{current.title}</h3>
+                  <p className="card__caption">{current.caption}</p>
+                </div>
+                {isTimeSeries && (
+                  <label className="events-toggle">
+                    <input
+                      type="checkbox"
+                      checked={showEvents}
+                      onChange={(e) => setShowEvents(e.target.checked)}
+                    />
+                    Show events
+                  </label>
+                )}
               </div>
+
               {metric === 'snapshot' ? (
                 <SnapshotChart key={chartKey} active={active} />
+              ) : metric === 'reasons' ? (
+                <ReasonChart key={chartKey} />
+              ) : metric === 'agesex' ? (
+                <AgeProfileChart key={chartKey} />
               ) : (
-                <MigrationChart key={chartKey} metric={metric} active={active} />
+                <MigrationChart key={chartKey} metric={metric} active={active} showEvents={showEvents} />
               )}
-              {metric !== 'snapshot' && (
+
+              {isTimeSeries && (
                 <p className="card__axis-note">
                   {AXIS_NOTES[metric] ||
                     'Vertical axis: millions of people (M). All figures are provisional ONS estimates.'}
                 </p>
+              )}
+              {isTimeSeries && showEvents && (
+                <ol className="events-legend">
+                  {ANNOTATIONS.map((a, i) => (
+                    <li key={a.year}>
+                      <span className="events-legend__num">{i + 1}</span>
+                      {a.year} · {a.label}
+                    </li>
+                  ))}
+                </ol>
               )}
             </div>
           </div>

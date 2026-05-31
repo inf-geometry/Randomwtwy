@@ -8,23 +8,32 @@ stories — this app lets you pull them apart.
 
 ## Features
 
-- **Eight interactive views**, grouped in a side-nav (Levels · Flows &
-  composition · Change over time):
+- **Ten interactive views**, grouped in a side-nav (Levels · Flows & composition ·
+  Why people come · Change over time · Demographics):
   - **Annual net** — net migration per year, grouped bars.
   - **Cumulative net** — a running total since 2012 (area + line).
   - **Share of UK-born** — cumulative net against a fixed ~57.4m UK-born benchmark.
   - **In vs out** — diverging stacked bars of inflows (up) and outflows (down).
   - **Composition of arrivals** — 100% stacked share of total immigration by group.
   - **Emigration intensity** — outflow ÷ inflow per group (1.0× = net zero).
+  - **By reason (Non-EU+)** — arrivals/net split by study, work, family,
+    humanitarian, asylum and other (2019–2025).
   - **Momentum** — year-over-year change in net migration.
   - **Year explorer** — an interactive play/scrub snapshot across the years.
+  - **Age & sex profile** — a population pyramid of arrivals/departures by age
+    band and sex, for British and Non-EU+ (2022–2025).
 - **Toggleable nationality groups** — turn Non-EU+, EU+ and British on/off with
   colour-coded chips; charts and tooltips update instantly.
-- **Hover-to-learn explainers** — dotted-underlined terms (*cumulative*,
-  *net migration*, *UK-born benchmark*…) reveal plain-English definitions, plus a
-  full glossary section.
-- **Animated headline stats**, custom chart tooltips, responsive layout, and
-  `prefers-reduced-motion` support.
+- **Event annotations** — optional policy markers (2016 referendum, 2021
+  points-based system, 2022 Ukraine/BN(O), 2024 visa tightening) on the
+  time-series charts.
+- **Colour-blind aware** — groups are encoded by line style and marker shape as
+  well as colour (British blue/solid/circle, EU+ green/dashed/square, Non-EU+
+  red/dotted/triangle), and the reason view uses the Okabe–Ito palette.
+- **Hover-to-learn explainers** — dotted-underlined terms reveal plain-English
+  definitions, plus a full glossary section.
+- **Animated headline stats**, custom tooltips, responsive layout (dense bar
+  charts scroll horizontally on mobile), and `prefers-reduced-motion` support.
 
 ## Data
 
@@ -35,6 +44,15 @@ the nearest thousand). The source workbook is committed as
 [`may2026publicationspreadsheet.xlsx`](may2026publicationspreadsheet.xlsx). The
 same admin-based method and EU+ definition apply across the whole span, so
 2012–2025 is a single consistent series. Recent periods are **provisional**.
+
+The two deeper views draw on further tables of the same workbook, embedded in
+[`src/reasons.js`](src/reasons.js) and [`src/agesex.js`](src/agesex.js):
+
+- **By reason** — Table 4b (Non-EU+ by reason for migration), YE December
+  2019–2025. British have no visa reason and EU+ reason covers only the small
+  post-2021 visa-holder subset, so this view is Non-EU+ only.
+- **Age & sex** — Tables 7a (British) and 7d (Non-EU+), YE December 2022–2025.
+  EU+ is split across sub-tables with no clean total, so it is omitted here.
 
 > The "UK-born benchmark" (~57.4m) is a fixed, illustrative yardstick for scale,
 > not a real year-by-year denominator: the ONS annual population-by-country-of-birth
