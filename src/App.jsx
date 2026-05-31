@@ -190,19 +190,19 @@ export default function App() {
           value={HEADLINES.peakNet / 1000}
           label={`Overall net migration peaked in ${HEADLINES.peakYear}`}
           sub="sum of all three groups"
-          accent="#4f46e5"
+          accent="#7c3aed"
         />
         <StatCard
           value={HEADLINES.overallNetLatest / 1000}
           label={`Overall net migration, ${HEADLINES.latestYear}`}
           sub="down sharply from the peak"
-          accent="#0ea5e9"
+          accent="#d97706"
         />
         <StatCard
           value={HEADLINES.nonEuCumulative / 1000}
           label={`Non-EU+ net, added up ${FIRST_YEAR}–${LAST_YEAR}`}
           sub="the main driver of the rise"
-          accent="#f59e0b"
+          accent="#dc2626"
         />
         <StatCard
           value={HEADLINES.britCumulative / 1000}
