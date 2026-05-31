@@ -1,8 +1,16 @@
 // UK long-term international migration, YE December estimates (thousands).
-// Source: ONS long-term immigration, emigration and net migration flows.
-// Latest annual endpoint: YE December 2025, released 21 May 2026 (provisional).
-// Values rounded to the nearest thousand; group sums can differ slightly from
-// separately published headline totals because of rounding.
+// Source: ONS "Long-term international immigration, emigration and net migration
+// flows" — admin-based estimates built from Home Office Borders & Immigration
+// data, DWP RAPID, and ONS International Passenger Survey data. Consistent
+// methodology and EU+ definition across the whole 2012–2025 span.
+// Inflow, outflow and net are taken directly from ONS Table 1 (YE December).
+// ONS computes net on unrounded numbers, so net can differ from (in − out) by
+// ~1k. Latest periods are provisional. See may2026publicationspreadsheet.xlsx.
+//
+// EU+ = EU members plus EUSS holders, EU+ visa holders and Irish nationals.
+// Caveat: ONS used different methods for British nationals before vs after
+// YE June 2021, so British figures either side of 2021 aren't perfectly
+// comparable (a minor refinement, not a methodology break).
 
 // A fixed, illustrative benchmark of UK-born residents (thousands):
 // ONS mid-2021 UK population estimate of 67.0m less the ONS estimate of
@@ -12,6 +20,54 @@ export const UK_BORN_BENCHMARK = 57400
 // Per-year, per-group flows in thousands.
 // net is published net migration (rounded), which can differ from in - out.
 export const RAW = [
+  {
+    year: 2012,
+    nonEu: { in: 230, out: 169, net: 61 },
+    eu: { in: 334, out: 128, net: 206 },
+    brit: { in: 79, out: 151, net: -72 },
+  },
+  {
+    year: 2013,
+    nonEu: { in: 234, out: 171, net: 63 },
+    eu: { in: 402, out: 141, net: 262 },
+    brit: { in: 76, out: 157, net: -81 },
+  },
+  {
+    year: 2014,
+    nonEu: { in: 241, out: 154, net: 87 },
+    eu: { in: 457, out: 180, net: 277 },
+    brit: { in: 81, out: 161, net: -80 },
+  },
+  {
+    year: 2015,
+    nonEu: { in: 238, out: 150, net: 88 },
+    eu: { in: 481, out: 193, net: 287 },
+    brit: { in: 78, out: 151, net: -73 },
+  },
+  {
+    year: 2016,
+    nonEu: { in: 237, out: 147, net: 90 },
+    eu: { in: 465, out: 213, net: 253 },
+    brit: { in: 70, out: 163, net: -94 },
+  },
+  {
+    year: 2017,
+    nonEu: { in: 257, out: 144, net: 114 },
+    eu: { in: 411, out: 235, net: 176 },
+    brit: { in: 84, out: 164, net: -81 },
+  },
+  {
+    year: 2018,
+    nonEu: { in: 330, out: 152, net: 178 },
+    eu: { in: 421, out: 250, net: 170 },
+    brit: { in: 74, out: 147, net: -72 },
+  },
+  {
+    year: 2019,
+    nonEu: { in: 368, out: 182, net: 186 },
+    eu: { in: 349, out: 269, net: 80 },
+    brit: { in: 71, out: 153, net: -82 },
+  },
   {
     year: 2020,
     nonEu: { in: 294, out: 192, net: 101 },
@@ -106,7 +162,7 @@ function buildSeries() {
       brit_net: row.brit.net,
       overall_net: overallNet,
 
-      // Cumulative net migration since 2020
+      // Cumulative net migration since the first year in the series
       nonEu_cum: cum.nonEu,
       eu_cum: cum.eu,
       brit_cum: cum.brit,
@@ -128,7 +184,7 @@ function buildSeries() {
       brit_share: pct(row.brit.net),
       overall_share: pct(overallNet),
 
-      // Cumulative net (since 2020) as a share of the UK-born benchmark (%)
+      // Cumulative net (since first year) as a share of the UK-born benchmark (%)
       nonEu_cumShare: pct(cum.nonEu),
       eu_cumShare: pct(cum.eu),
       brit_cumShare: pct(cum.brit),
@@ -159,15 +215,21 @@ function buildSeries() {
 
 export const SERIES = buildSeries()
 
+// First and last years in the series — derived so nothing hardcodes the range.
+export const FIRST_YEAR = SERIES[0].year
+export const LAST_YEAR = SERIES[SERIES.length - 1].year
+
 // Headline figures used in the animated stat cards.
 const last = SERIES[SERIES.length - 1]
 const peak = SERIES.reduce((a, b) => (b.overall_net > a.overall_net ? b : a))
 
 export const HEADLINES = {
+  firstYear: FIRST_YEAR,
   latestYear: last.year,
   overallNetLatest: last.overall_net,
   peakYear: peak.year,
   peakNet: peak.overall_net,
+  // Cumulative totals across the full series (since FIRST_YEAR).
   nonEuCumulative: last.nonEu_cum,
   britCumulative: last.brit_cum,
 }

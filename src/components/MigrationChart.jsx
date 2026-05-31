@@ -40,8 +40,8 @@ export default function MigrationChart({ metric, active }) {
           data={SERIES}
           stackOffset="none"
           margin={{ top: 16, right: 12, bottom: 8, left: 4 }}
-          barGap={metric === 'flows' ? 2 : 4}
-          barCategoryGap={metric === 'flows' ? '22%' : '28%'}
+          barGap={metric === 'flows' ? 1 : 3}
+          barCategoryGap={metric === 'flows' ? '14%' : '20%'}
         >
           <defs>
             {GROUPS.map((g) => (
@@ -55,9 +55,12 @@ export default function MigrationChart({ metric, active }) {
           <CartesianGrid strokeDasharray="3 6" stroke="rgba(15,23,42,0.08)" vertical={false} />
           <XAxis
             dataKey="year"
+            interval="preserveStartEnd"
+            minTickGap={14}
+            tickFormatter={(y) => `’${String(y).slice(2)}`}
             tickLine={false}
             axisLine={{ stroke: 'rgba(15,23,42,0.15)' }}
-            tick={{ fill: '#475569', fontSize: 13, fontWeight: 600 }}
+            tick={{ fill: '#475569', fontSize: 12, fontWeight: 600 }}
             dy={6}
           />
           <YAxis
@@ -91,7 +94,7 @@ export default function MigrationChart({ metric, active }) {
                 dataKey={`${g.key}_net`}
                 fill={g.color}
                 radius={[5, 5, 0, 0]}
-                maxBarSize={46}
+                maxBarSize={34}
                 animationDuration={650}
               />
             ))}
@@ -136,7 +139,7 @@ export default function MigrationChart({ metric, active }) {
                 stackId="pos"
                 fill={g.color}
                 radius={[4, 4, 0, 0]}
-                maxBarSize={54}
+                maxBarSize={40}
                 animationDuration={650}
               />,
               <Bar
@@ -146,7 +149,7 @@ export default function MigrationChart({ metric, active }) {
                 fill={g.color}
                 fillOpacity={0.4}
                 radius={[0, 0, 4, 4]}
-                maxBarSize={54}
+                maxBarSize={40}
                 animationDuration={650}
               />,
             ])}
@@ -190,7 +193,7 @@ export default function MigrationChart({ metric, active }) {
                 dataKey={`${g.key}_yoy`}
                 fill={g.color}
                 radius={[4, 4, 0, 0]}
-                maxBarSize={46}
+                maxBarSize={34}
                 animationDuration={650}
               />
             ))}
