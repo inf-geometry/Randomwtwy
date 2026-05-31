@@ -26,6 +26,7 @@ import SnapshotChart from './components/SnapshotChart.jsx'
 import ReasonChart from './components/ReasonChart.jsx'
 import AgeProfileChart from './components/AgeProfileChart.jsx'
 import StatCard from './components/StatCard.jsx'
+import HeadlineStat from './components/HeadlineStat.jsx'
 import useResizeKey from './components/useResizeKey.js'
 
 // Views are grouped into these categories, shown in order in the side-nav.
@@ -269,6 +270,8 @@ export default function App() {
 
       {/* ---------- Explorer ---------- */}
       <section className="explorer" id="explore">
+        <HeadlineStat />
+
         <div className="explorer__intro">
           <h2>Explore the data</h2>
           <p>
