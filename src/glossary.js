@@ -7,7 +7,7 @@ export const GLOSSARY = {
   },
   cumulative: {
     title: 'Cumulative',
-    body: 'A running total. Cumulative net migration adds up each year’s net figure since 2020, so it shows the combined effect over the whole period rather than a single year.',
+    body: 'A running total. Cumulative net migration adds up each year’s net figure across the whole period shown, so it captures the combined effect over time rather than a single year.',
   },
   inflow: {
     title: 'Inflow (immigration)',

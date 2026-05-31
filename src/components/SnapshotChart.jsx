@@ -52,7 +52,7 @@ export default function SnapshotChart({ active }) {
     if (!playing) return
     timer.current = setInterval(() => {
       setIdx((i) => (i + 1) % SERIES.length)
-    }, 1100)
+    }, 850)
     return () => clearInterval(timer.current)
   }, [playing])
 

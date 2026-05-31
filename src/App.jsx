@@ -1,5 +1,11 @@
 import { useState } from 'react'
-import { GROUPS, HEADLINES, UK_BORN_BENCHMARK } from './data.js'
+import { GROUPS, HEADLINES, UK_BORN_BENCHMARK, SERIES, FIRST_YEAR, LAST_YEAR } from './data.js'
+
+// A couple of data-driven facts used in captions, so nothing is hardcoded.
+const latest = SERIES[SERIES.length - 1]
+const nonEuShareNow = Math.round(latest.nonEu_cumShare)
+const compStart = SERIES[0]
+const compPeak = SERIES.reduce((a, b) => (b.nonEu_inShare > a.nonEu_inShare ? b : a))
 import { GLOSSARY } from './glossary.js'
 import Term from './components/Term.jsx'
 import MigrationChart from './components/MigrationChart.jsx'
@@ -31,12 +37,12 @@ const METRICS = [
     cat: 'Levels',
     label: 'Cumulative net',
     tag: 'Running total',
-    title: 'Cumulative net migration since 2020',
+    title: `Cumulative net migration since ${FIRST_YEAR}`,
     caption: (
       <>
-        A <Term id="cumulative">cumulative</Term> view adds up every year’s net figure from 2020
-        onward, so the line shows the combined effect over the whole period rather than any single
-        year.
+        A <Term id="cumulative">cumulative</Term> view adds up every year’s net figure from{' '}
+        {FIRST_YEAR} onward, so the line shows the combined effect over the whole period rather than
+        any single year.
       </>
     ),
   },
@@ -48,10 +54,11 @@ const METRICS = [
     title: 'Cumulative net migration vs the UK-born benchmark',
     caption: (
       <>
-        The <Term id="cumulative">cumulative</Term> net figure since 2020 shown as a share of a
-        fixed <Term id="uk-born benchmark">UK-born benchmark</Term> of ~
+        The <Term id="cumulative">cumulative</Term> net figure since {FIRST_YEAR} shown as a share
+        of a fixed <Term id="uk-born benchmark">UK-born benchmark</Term> of ~
         {(UK_BORN_BENCHMARK / 1000).toFixed(1)} million — an illustrative yardstick for scale, not a
-        real annual denominator. By 2025 Non-EU+ arrivals net to roughly 6% of that baseline.
+        real annual denominator. By {LAST_YEAR}, Non-EU+ arrivals net to roughly {nonEuShareNow}% of
+        that baseline.
       </>
     ),
   },
@@ -78,8 +85,9 @@ const METRICS = [
     caption: (
       <>
         The <Term id="composition">composition</Term> of each year’s arrivals — every group’s share
-        of total <Term id="inflow">immigration</Term>. Non-EU+ nationals rose from about 44% of
-        arrivals in 2020 to roughly 82% in 2023. (Always shows all three groups.)
+        of total <Term id="inflow">immigration</Term>. Non-EU+ nationals rose from about{' '}
+        {Math.round(compStart.nonEu_inShare)}% of arrivals in {compStart.year} to roughly{' '}
+        {Math.round(compPeak.nonEu_inShare)}% in {compPeak.year}. (Always shows all three groups.)
       </>
     ),
   },
@@ -129,8 +137,7 @@ const METRICS = [
 ]
 
 const AXIS_NOTES = {
-  share:
-    'Vertical axis: cumulative net migration since 2020 as a share of the fixed UK-born benchmark.',
+  share: `Vertical axis: cumulative net migration since ${FIRST_YEAR} as a share of the fixed UK-born benchmark.`,
   composition: 'Vertical axis: share of each year’s total immigration (sums to 100%).',
   emigration: 'Vertical axis: people leaving per person arriving (1.0× = net zero).',
 }
@@ -161,7 +168,9 @@ export default function App() {
       <header className="hero">
         <div className="hero__glow" aria-hidden="true" />
         <div className="hero__inner">
-          <span className="hero__eyebrow">UK migration · 2020 – {HEADLINES.latestYear}</span>
+          <span className="hero__eyebrow">
+            UK migration · {FIRST_YEAR} – {HEADLINES.latestYear}
+          </span>
           <h1 className="hero__title">
             What’s behind <span className="hero__accent">net migration?</span>
           </h1>
@@ -191,13 +200,13 @@ export default function App() {
         />
         <StatCard
           value={HEADLINES.nonEuCumulative / 1000}
-          label="Non-EU+ net, added up 2020–2025"
+          label={`Non-EU+ net, added up ${FIRST_YEAR}–${LAST_YEAR}`}
           sub="the main driver of the rise"
           accent="#f59e0b"
         />
         <StatCard
           value={HEADLINES.britCumulative / 1000}
-          label="British net, added up 2020–2025"
+          label={`British net, added up ${FIRST_YEAR}–${LAST_YEAR}`}
           sub="a steady, growing net outflow"
           accent="#10b981"
         />
@@ -300,15 +309,25 @@ export default function App() {
           <h3>About these figures</h3>
           <ul>
             <li>
-              Source: ONS long-term international immigration, emigration and net migration flows.
-              Latest endpoint <Term id="ye december">YE December</Term> {HEADLINES.latestYear},
-              released 21 May 2026. Figures are <Term id="provisional">provisional</Term> and
-              rounded to the nearest thousand.
+              Source: ONS “Long-term international immigration, emigration and net migration flows”
+              (admin-based estimates from Home Office Borders &amp; Immigration data, DWP RAPID and
+              the ONS International Passenger Survey), {FIRST_YEAR}–{HEADLINES.latestYear} on a
+              consistent methodology. Latest endpoint{' '}
+              <Term id="ye december">YE December</Term> {HEADLINES.latestYear}, released May 2026;
+              recent periods are <Term id="provisional">provisional</Term> and figures are rounded to
+              the nearest thousand. Compiled from the ONS May 2026 publication spreadsheet
+              (<code>may2026publicationspreadsheet.xlsx</code>, Table 1).
             </li>
             <li>
-              “<Term id="long-term">Long-term</Term>” migration counts moves of 12 months or more.
-              Overall values are sums of the rounded group components and can differ slightly from
-              separately published headline totals.
+              “<Term id="long-term">Long-term</Term>” migration counts moves of 12 months or more.{' '}
+              <Term id="eu+">EU+</Term> covers EU nationals plus EUSS holders, EU+ visa holders and
+              Irish nationals. Overall values are sums of the rounded group components and can differ
+              by ~1k from separately published headline totals.
+            </li>
+            <li>
+              ONS used different methods to estimate <Term id="british">British</Term> nationals
+              before versus after YE June 2021, so British figures either side of 2021 aren’t
+              perfectly comparable — a minor refinement, not a methodology break.
             </li>
             <li>
               The <Term id="uk-born benchmark">UK-born benchmark</Term> (~57.4m) is fixed and
@@ -318,7 +337,7 @@ export default function App() {
             </li>
           </ul>
           <p className="foot__sig">
-            Built as an interactive companion to the 2020–2025 migration chart set.
+            An interactive exploration of the ONS {FIRST_YEAR}–{LAST_YEAR} migration series.
           </p>
         </div>
       </footer>
