@@ -107,27 +107,28 @@ export const RAW = [
 ]
 
 // The three nationality groups, with display metadata.
+// Colours chosen for colour-blind legibility: British blue, EU+ green, Non-EU+ red.
 export const GROUPS = [
   {
     key: 'nonEu',
     label: 'Non-EU+ nationals',
     short: 'Non-EU+',
-    color: '#4f46e5',
-    soft: 'rgba(79, 70, 229, 0.12)',
+    color: '#dc2626',
+    soft: 'rgba(220, 38, 38, 0.12)',
   },
   {
     key: 'eu',
     label: 'EU+ nationals',
     short: 'EU+',
-    color: '#f59e0b',
-    soft: 'rgba(245, 158, 11, 0.12)',
+    color: '#059669',
+    soft: 'rgba(5, 150, 105, 0.12)',
   },
   {
     key: 'brit',
     label: 'British nationals',
     short: 'British',
-    color: '#10b981',
-    soft: 'rgba(16, 185, 129, 0.12)',
+    color: '#2563eb',
+    soft: 'rgba(37, 99, 235, 0.12)',
   },
 ]
 
