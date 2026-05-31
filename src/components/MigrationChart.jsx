@@ -40,6 +40,16 @@ export default function MigrationChart({ metric, active, showEvents }) {
 
   const isShareLike = metric === 'share' || metric === 'composition'
   const isBars = metric === 'annual' || metric === 'flows' || metric === 'momentum'
+
+  // On narrow screens the 14-year bar charts get cramped. Rather than scroll,
+  // thin the flatter early years (keep every other year before 2021) while
+  // keeping every recent year, so it fits and stays readable. Line/area charts
+  // keep all years (thinning would distort their shape). This component is
+  // remounted on width changes, so reading innerWidth here stays current.
+  const narrow = typeof window !== 'undefined' && window.innerWidth < 700
+  const chartData =
+    isBars && narrow ? SERIES.filter((d) => d.year >= 2021 || d.year % 2 === 0) : SERIES
+
   const tickFormatter =
     metric === 'emigration'
       ? axisFmtRatio
@@ -64,7 +74,7 @@ export default function MigrationChart({ metric, active, showEvents }) {
       <div className="chart-wrap" data-bars={isBars}>
         <ResponsiveContainer width="100%" height={440}>
           <ComposedChart
-            data={SERIES}
+            data={chartData}
             stackOffset="none"
             margin={{ top: 22, right: 12, bottom: 8, left: 4 }}
             barGap={metric === 'flows' ? 1 : 3}

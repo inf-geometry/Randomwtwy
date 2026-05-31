@@ -869,10 +869,6 @@ h4 {
 
 /* ---------------- Responsive ---------------- */
 @media (max-width: 880px) {
-  /* Dense bar charts get a min-width and scroll horizontally on small screens. */
-  .chart-scrollwrap.is-scroll .chart-wrap[data-bars='true'] {
-    min-width: 560px;
-  }
   .stats {
     grid-template-columns: repeat(2, 1fr);
   }
