@@ -717,8 +717,162 @@ h4 {
   color: var(--muted);
 }
 
+/* ---------------- Card head + event annotations ---------------- */
+.card__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+.card__head > div {
+  min-width: 0;
+}
+
+.events-toggle {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+}
+.events-toggle input {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--indigo);
+  cursor: pointer;
+}
+
+.events-legend {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin: 10px 4px 0;
+  padding: 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.events-legend li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.events-legend__num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  color: #475569;
+  font-size: 11px;
+  font-weight: 700;
+  flex: none;
+}
+
+/* ---------------- Reason / age toggles + legends ---------------- */
+.reason-toggle {
+  display: inline-flex;
+  gap: 4px;
+  background: #eceefb;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  padding: 4px;
+  margin-bottom: 10px;
+}
+.reason-toggle button {
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  padding: 7px 16px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: background 0.15s ease, box-shadow 0.15s ease, color 0.15s ease;
+}
+.reason-toggle button:hover {
+  background: rgba(255, 255, 255, 0.6);
+}
+.reason-toggle button.is-active {
+  background: #fff;
+  color: var(--ink);
+  box-shadow: var(--shadow-sm);
+}
+
+.reason-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin: 12px 4px 0;
+}
+.reason-legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.86rem;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+.reason-legend__dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  flex: none;
+}
+
+.chart-tip__total {
+  margin-top: 8px;
+  padding-top: 7px;
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.age__controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: space-between;
+  align-items: center;
+}
+.age__axislabels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--muted);
+  margin: 6px 8px 0;
+}
+
+/* ---------------- Marker-shape chip dots (colour-blind aid) ---------------- */
+.chip__dot--square {
+  border-radius: 2px;
+}
+.chip__dot--triangle {
+  border-radius: 0;
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+
+/* ---------------- Horizontal scroll for dense bar charts ---------------- */
+.chart-scrollwrap.is-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 /* ---------------- Responsive ---------------- */
 @media (max-width: 880px) {
+  /* Dense bar charts get a min-width and scroll horizontally on small screens. */
+  .chart-scrollwrap.is-scroll .chart-wrap[data-bars='true'] {
+    min-width: 560px;
+  }
   .stats {
     grid-template-columns: repeat(2, 1fr);
   }

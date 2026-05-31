@@ -57,4 +57,24 @@ export const GLOSSARY = {
     title: 'Momentum',
     body: 'The change in net migration compared with the previous year. Positive bars mean net migration rose year-on-year; negative bars mean it fell — useful for seeing turning points rather than levels.',
   },
+  study: {
+    title: 'Study',
+    body: 'Migration to study, mostly higher education. Main applicants are the students; dependants are family members coming with them. Study was a major driver of the post-2020 rise.',
+  },
+  work: {
+    title: 'Work',
+    body: 'Migration for employment. Main applicants hold the work visa; dependants are accompanying family. Health and care roles drove much of the recent increase.',
+  },
+  family: {
+    title: 'Family',
+    body: 'Migration to join or accompany a family member who already lives in the UK.',
+  },
+  humanitarian: {
+    title: 'Humanitarian',
+    body: 'People arriving on dedicated safe and legal routes — the Ukraine schemes, the BN(O) Hong Kong route, and refugee resettlement. The 2022 spike is mostly Ukraine.',
+  },
+  asylum: {
+    title: 'Asylum',
+    body: 'People who claimed asylum (protection as a refugee) after arriving, outside the dedicated humanitarian routes.',
+  },
 }
